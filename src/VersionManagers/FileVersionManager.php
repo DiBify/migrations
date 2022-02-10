@@ -26,7 +26,7 @@ class FileVersionManager implements VersionManagerInterface
         if (file_exists((string) $this->file)) {
             $this->applied = json_decode(file_get_contents((string) $this->file), true);
         } else {
-            file_put_contents((string) $this->file, '');
+            file_put_contents((string) $this->file, '{}');
         }
     }
 
