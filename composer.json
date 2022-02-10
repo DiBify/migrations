@@ -1,0 +1,34 @@
+{
+  "name": "dibify/migrations",
+  "type": "library",
+  "description": "DiBify migrations",
+  "keywords": [
+    "db",
+    "database",
+    "orm",
+    "migrations"
+  ],
+  "authors": [
+    {
+      "name": "Timur Kasumov aka XAKEPEHOK",
+      "role": "Main developer"
+    }
+  ],
+  "license": "BSD-3-Clause",
+  "require": {
+    "php": ">=7.4.0",
+    "ext-json": "*",
+    "symfony/console": "^5.4",
+    "xakepehok/path": "^0.2.2",
+    "symfony/process": "^5.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0"
+  },
+  "autoload": {
+    "psr-4": {"DiBify\\Migrations\\Manager\\": "src/"}
+  },
+  "autoload-dev": {
+    "psr-4": {"DiBify\\Migrations\\Manager\\": "tests/"}
+  }
+}
