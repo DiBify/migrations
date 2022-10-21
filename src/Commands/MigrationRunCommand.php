@@ -33,20 +33,27 @@ class MigrationRunCommand extends Command
 
         $path = Path::root()->down('migrations');
         $executed = 0;
+
+        $migrations = [];
         foreach (new DirectoryIterator($path) as $fileInfo) {
 
             if ($fileInfo->getExtension() !== 'php') {
                 continue;
             }
 
-            $name = $fileInfo->getBasename();
+            $migrations[$fileInfo->getBasename()] = $fileInfo->getFilename();
+        }
+
+        ksort($migrations);
+
+        foreach ($migrations as $name => $filename) {
 
             if (isset($applied[$name])) {
                 continue;
             }
 
             $output->writeln("##### START OF EXECUTING `{$name}` #####");
-            $process = new Process(['php', $fileInfo->getFilename()], null, $_ENV);
+            $process = new Process(['php', $filename], null, $_ENV);
             $process->setTimeout(null);
             $process->setWorkingDirectory($path);
             $process->run(function ($type, $buffer) use ($output) {
