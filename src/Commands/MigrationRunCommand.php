@@ -12,7 +12,9 @@ use DiBify\Migrations\Manager\VersionManagers\VersionManagerInterface;
 use DirectoryIterator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Process\Process;
 use XAKEPEHOK\Path\Path;
 
@@ -25,6 +27,13 @@ class MigrationRunCommand extends Command
     {
         parent::__construct();
         $this->versionManager = $versionManager;
+        $this->addOption(
+            'silent',
+            's',
+            InputOption::VALUE_OPTIONAL,
+            'Apply new migrations without user confirmation',
+            '0'
+        );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -46,12 +55,30 @@ class MigrationRunCommand extends Command
 
         ksort($migrations);
 
-        foreach ($migrations as $name => $filename) {
+        $migrations = array_filter($migrations, function (string $value, string $key) {
+            return !isset($applied[$key]);
+        }, ARRAY_FILTER_USE_BOTH);
 
-            if (isset($applied[$name])) {
-                continue;
+        if (empty($migrations)) {
+            $output->writeln('No migrations to apply');
+            return Command::SUCCESS;
+        }
+
+        if ($input->getOption('silent') !== '1') {
+            $output->writeln('Following migrations not applied yet:');
+            foreach ($migrations as $name => $filename) {
+                $output->writeln(' - ' . $name);
             }
 
+            $helper = $this->getHelper('question');
+            $question = new ConfirmationQuestion('Do you want apply this migrations? (y/n) ', false);
+
+            if (!$helper->ask($input, $output, $question)) {
+                return Command::SUCCESS;
+            }
+        }
+
+        foreach ($migrations as $name => $filename) {
             $output->writeln("##### START OF EXECUTING `{$name}` #####");
             $process = new Process(['php', $filename], null, $_ENV);
             $process->setTimeout(null);
@@ -66,14 +93,13 @@ class MigrationRunCommand extends Command
                 $executed++;
             } else {
                 $output->writeln("<error>##### FAILED `{$name}` #####</error>");
-                return 0;
+                return Command::FAILURE;
             }
         }
 
 
         $output->writeln('Executed: ' . $executed);
-
-        return 1;
+        return Command::SUCCESS;
     }
 
     protected function configure()
