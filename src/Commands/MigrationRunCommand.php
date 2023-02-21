@@ -55,7 +55,7 @@ class MigrationRunCommand extends Command
 
         ksort($migrations);
 
-        $migrations = array_filter($migrations, function (string $value, string $key) {
+        $migrations = array_filter($migrations, function (string $value, string $key) use ($applied) {
             return !isset($applied[$key]);
         }, ARRAY_FILTER_USE_BOTH);
 
