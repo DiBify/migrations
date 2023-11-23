@@ -28,11 +28,10 @@ class MigrationRunCommand extends Command
         parent::__construct();
         $this->versionManager = $versionManager;
         $this->addOption(
-            'silent',
-            's',
-            InputOption::VALUE_OPTIONAL,
+            'yes',
+            'y',
+            InputOption::VALUE_NONE,
             'Apply new migrations without user confirmation',
-            '0'
         );
     }
 
@@ -64,7 +63,7 @@ class MigrationRunCommand extends Command
             return Command::SUCCESS;
         }
 
-        if ($input->getOption('silent') !== '1') {
+        if (!$input->getOption('yes')) {
             $output->writeln('Following migrations not applied yet:');
             foreach ($migrations as $name => $filename) {
                 $output->writeln(' - ' . $name);
