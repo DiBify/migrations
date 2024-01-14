@@ -35,7 +35,7 @@ class MigrationRunCommand extends Command
         );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $applied = $this->versionManager->getApplied();
 

@@ -17,7 +17,7 @@ use XAKEPEHOK\Path\Path;
 class MigrationCreateCommand extends Command
 {
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $name = $this->generateName($input->getArgument('name'));
 
@@ -34,7 +34,7 @@ class MigrationCreateCommand extends Command
 
         $output->writeln("Migration '{$name}' created");
 
-        return 1;
+        return self::SUCCESS;
     }
 
     protected function configure()
