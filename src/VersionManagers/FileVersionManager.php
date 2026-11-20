@@ -15,7 +15,7 @@ class FileVersionManager implements VersionManagerInterface
     protected Path $file;
     protected array $applied = [];
 
-    public function __construct(string $filePath = null)
+    public function __construct(?string $filePath = null)
     {
         if ($filePath) {
             $this->file = new Path($filePath);
